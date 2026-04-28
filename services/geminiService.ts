@@ -43,10 +43,34 @@ TUYỆT ĐỐI KHÔNG thêm các ký tự đánh số thứ tự như "A.", "B."
 **Trả về JSON theo cấu trúc sau (KHÔNG được thêm text ngoài JSON):**
 {
   "title": "Tên đề thi",
-  "multipleChoice": [... ĐÚNG ${config.mcCount} câu ...],
-  "trueFalse": [... ĐÚNG ${config.tfCount} câu ...],
-  "essay": [... ĐÚNG ${config.essayCount || 0} câu ...]
-}`;
+  "multipleChoice": [
+    {
+      "question": "Nội dung câu hỏi?",
+      "options": ["Phương án 1", "Phương án 2", "Phương án 3", "Phương án 4"],
+      "correctAnswer": "A",
+      "level": "Nhận biết"
+    }
+  ],
+  "trueFalse": [
+    {
+      "context": "Đoạn ngữ liệu lịch sử dài khoảng 2-3 câu...",
+      "statements": [
+        { "statement": "Nội dung phát biểu ý a (KHÔNG ĐƯỢC ĐỂ TRỐNG)", "isTrue": true },
+        { "statement": "Nội dung phát biểu ý b (KHÔNG ĐƯỢC ĐỂ TRỐNG)", "isTrue": false },
+        { "statement": "Nội dung phát biểu ý c (KHÔNG ĐƯỢC ĐỂ TRỐNG)", "isTrue": true },
+        { "statement": "Nội dung phát biểu ý d (KHÔNG ĐƯỢC ĐỂ TRỐNG)", "isTrue": false }
+      ],
+      "level": "Thông hiểu"
+    }
+  ],
+  "essay": []
+}
+
+**LƯU Ý CỰC KỲ QUAN TRỌNG:**
+- Mỗi "statement" trong trueFalse PHẢI có nội dung cụ thể, TUYỆT ĐỐI KHÔNG ĐƯỢC để trống ("").
+- Mỗi statement phải là một phát biểu rõ ràng liên quan đến đoạn context.
+- multipleChoice phải có CHÍNH XÁC ${config.mcCount} phần tử.
+- trueFalse phải có CHÍNH XÁC ${config.tfCount} phần tử.`;
 
   try {
     const response = await fetch(OPENAI_API_URL, {
@@ -79,18 +103,27 @@ TUYỆT ĐỐI KHÔNG thêm các ký tự đánh số thứ tự như "A.", "B."
 
     const rawData = JSON.parse(text);
 
+    // Post-processing: enforce exact counts by slicing arrays
+    const mcRaw = rawData.multipleChoice || [];
+    const tfRaw = rawData.trueFalse || [];
+    const essayRaw = rawData.essay || [];
+
     const examData: ExamData = {
       id: crypto.randomUUID(),
       timestamp: Date.now(),
       config: config,
       title: rawData.title || `Đề thi Lịch sử ${config.grade} - ${config.topic}`,
-      multipleChoice: rawData.multipleChoice ? rawData.multipleChoice.map((q: any) => ({ ...q, id: crypto.randomUUID() })) : [],
-      essay: rawData.essay ? rawData.essay.map((q: any) => ({ ...q, id: crypto.randomUUID() })) : [],
-      trueFalse: rawData.trueFalse ? rawData.trueFalse.map((q: any) => ({
+      multipleChoice: mcRaw.slice(0, config.mcCount).map((q: any) => ({ ...q, id: crypto.randomUUID() })),
+      essay: essayRaw.slice(0, config.essayCount || 0).map((q: any) => ({ ...q, id: crypto.randomUUID() })),
+      trueFalse: tfRaw.slice(0, config.tfCount).map((q: any) => ({
         ...q,
         id: crypto.randomUUID(),
-        statements: q.statements.map((s: any) => ({ ...s, id: crypto.randomUUID() }))
-      })) : []
+        statements: (q.statements || []).map((s: any) => ({
+          ...s,
+          statement: s.statement || s.content || s.text || '(Lỗi: Không có nội dung)',
+          id: crypto.randomUUID()
+        }))
+      }))
     };
 
     return examData;
