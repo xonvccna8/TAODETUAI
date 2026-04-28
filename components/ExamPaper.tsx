@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { ExamData, MultipleChoiceQuestion, EssayQuestion } from '../types';
-import { FileDown, CheckCircle2, PlayCircle } from 'lucide-react';
+import { ExamData } from '../types';
+import { FileDown, PlayCircle, Scroll } from 'lucide-react';
 
 interface Props {
   exam: ExamData;
@@ -11,19 +11,12 @@ interface Props {
 export const ExamPaper: React.FC<Props> = ({ exam, onTakeExam }) => {
 
   const exportToWord = () => {
-    // Basic HTML to Doc export strategy
-    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title><style>body{font-family: 'Times New Roman', serif; font-size: 13pt;}</style></head><body>";
-    
-    // Get the HTML content from the preview div
+    const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export</title><style>body{font-family: 'Times New Roman', serif; font-size: 13pt;}</style></head><body>";
     const examContent = document.getElementById('exam-preview-content')?.innerHTML;
-    
     if (!examContent) return;
-
     const footer = "</body></html>";
     const sourceHTML = header + examContent + footer;
-
     const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
-    
     const fileDownload = document.createElement("a");
     document.body.appendChild(fileDownload);
     fileDownload.href = source;
@@ -32,40 +25,41 @@ export const ExamPaper: React.FC<Props> = ({ exam, onTakeExam }) => {
     document.body.removeChild(fileDownload);
   };
 
-  // Helper function to clean option text (remove "A.", "A)", "a." from start)
   const cleanOptionText = (text: string) => {
-    // Regex matches "A.", "A)", "A " repeatedly at the start to handle cases like "A. A. Content"
     return text.replace(/^([A-D][.:)]\s*)+/i, "").trim();
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col h-full">
+    <div className="card-history rounded-2xl flex flex-col h-full overflow-hidden">
       {/* Toolbar */}
-      <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-3 bg-gray-50 rounded-t-xl">
-        <h3 className="font-bold text-gray-700 hidden sm:block">Xem trước Đề thi</h3>
+      <div className="p-4 border-b border-parchment-300 flex flex-col sm:flex-row justify-between items-center gap-3 bg-parchment-200/50">
+        <h3 className="font-bold text-burgundy-700 hidden sm:flex items-center gap-2 heading-serif">
+          <Scroll className="w-4 h-4 text-gold-400" />
+          Xem trước Đề thi
+        </h3>
         <div className="flex w-full sm:w-auto gap-2">
             <button
             onClick={onTakeExam}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition shadow-sm text-sm font-medium"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-500 text-white px-4 py-2.5 rounded-xl hover:from-green-700 hover:to-emerald-600 transition shadow-md text-sm font-semibold"
             >
             <PlayCircle className="w-4 h-4" />
             Làm bài Online
             </button>
             <button
             onClick={exportToWord}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-sm text-sm font-medium"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-burgundy-500 to-burgundy-400 text-white px-4 py-2.5 rounded-xl hover:from-burgundy-600 hover:to-burgundy-500 transition shadow-md text-sm font-semibold"
             >
             <FileDown className="w-4 h-4" />
-            Xuất file Word
+            Xuất Word
             </button>
         </div>
       </div>
 
       {/* Paper Content */}
-      <div className="flex-1 overflow-auto p-4 sm:p-8 bg-gray-50">
+      <div className="flex-1 overflow-auto p-4 sm:p-8 bg-parchment-100">
         <div 
           id="exam-preview-content" 
-          className="max-w-[210mm] mx-auto bg-white p-6 sm:p-[20mm] shadow-md min-h-[297mm]"
+          className="max-w-[210mm] mx-auto bg-white p-6 sm:p-[20mm] shadow-lg border border-parchment-300 min-h-[297mm]"
           style={{ fontFamily: "'Times New Roman', Times, serif" }}
         >
           {/* Header */}
@@ -92,7 +86,7 @@ export const ExamPaper: React.FC<Props> = ({ exam, onTakeExam }) => {
                     </p>
                     <div className="grid grid-cols-2 gap-x-4 gap-y-1 ml-4">
                       {q.options.map((opt, i) => {
-                        const label = String.fromCharCode(65 + i); // A, B, C, D
+                        const label = String.fromCharCode(65 + i);
                         return (
                           <div key={i} className={label === q.correctAnswer ? "font-bold text-blue-800" : ""}>
                             {label}. {cleanOptionText(opt)}
@@ -123,7 +117,7 @@ export const ExamPaper: React.FC<Props> = ({ exam, onTakeExam }) => {
                     </div>
                     <div className="space-y-2 ml-4">
                       {q.statements.map((stmt, i) => {
-                        const label = String.fromCharCode(97 + i); // a, b, c, d
+                        const label = String.fromCharCode(97 + i);
                         return (
                           <div key={stmt.id} className="flex items-start gap-2">
                             <span className="font-semibold w-6">{label}.</span>

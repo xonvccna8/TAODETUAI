@@ -3,25 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GenHistory Exam Pro</title>
+    <meta name="description" content="GenHistory Exam Pro - Công cụ tạo đề thi Lịch sử THPT tự động bằng AI, chuẩn cấu trúc 2025" />
+    <title>GenHistory Exam Pro - Tạo Đề Thi Lịch Sử AI</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📜</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/index.css">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
-              serif: ['Merriweather', 'serif'],
+              serif: ['Playfair Display', 'Georgia', 'serif'],
             },
             colors: {
+              parchment: {
+                50: '#fffdf7',
+                100: '#faf6f0',
+                200: '#f5efe5',
+                300: '#e8dcc8',
+                400: '#d4c5a9',
+                500: '#c4a265',
+                600: '#a0822d',
+              },
+              burgundy: {
+                50: '#fdf2f2',
+                100: '#f9dada',
+                200: '#e8a5a0',
+                300: '#c47068',
+                400: '#a0522d',
+                500: '#8b3a2f',
+                600: '#6b2018',
+                700: '#5a1a14',
+                800: '#44120d',
+                900: '#350e0a',
+              },
+              gold: {
+                50: '#fefce8',
+                100: '#fef3c7',
+                200: '#f0d78c',
+                300: '#d4a853',
+                400: '#b8922e',
+                500: '#8b6914',
+              },
               edu: {
-                50: '#f0f9ff',
-                100: '#e0f2fe',
-                500: '#0ea5e9',
-                600: '#0284c7',
-                800: '#075985',
-                900: '#0c4a6e',
+                50: '#fdf8f0',
+                100: '#faecd6',
+                500: '#c4703c',
+                600: '#a0522d',
+                800: '#6b2018',
+                900: '#44120d',
               }
             }
           }
@@ -38,9 +69,8 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-gray-50 text-gray-800 antialiased">
+  <body class="bg-parchment text-gray-800 antialiased">
     <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>

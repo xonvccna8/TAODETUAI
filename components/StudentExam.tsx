@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ExamData } from '../types';
-import { Clock, CheckCircle, XCircle, ChevronLeft, Send, Award, RotateCcw } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, ChevronLeft, Send, Award, RotateCcw, Scroll, BookOpen } from 'lucide-react';
 
 interface Props {
   exam: ExamData;
@@ -60,15 +60,12 @@ export const StudentExam: React.FC<Props> = ({ exam, onExit }) => {
     
     let totalScore = 0;
 
-    // Part 1: Multiple Choice
-    // In real exam: each is 0.25
     exam.multipleChoice.forEach(q => {
       if (answers[q.id] === q.correctAnswer) {
         totalScore += 0.25;
       }
     });
 
-    // Part 2: True/False
     if (exam.trueFalse) {
       exam.trueFalse.forEach(q => {
         let correctStmts = 0;
@@ -93,31 +90,30 @@ export const StudentExam: React.FC<Props> = ({ exam, onExit }) => {
   };
 
   const getScoreColor = () => {
-    // Assuming out of 10
     if (score >= 8) return 'text-green-600';
-    if (score >= 5) return 'text-yellow-600';
+    if (score >= 5) return 'text-gold-400';
     return 'text-red-600';
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-12 font-sans">
+    <div className="bg-parchment-100 min-h-screen pb-12 font-sans">
       {/* Header */}
-      <div className="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-200">
-        <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="header-gradient text-white sticky top-0 z-40">
+        <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
           <button 
             onClick={onExit}
-            className="flex items-center gap-1 text-gray-600 hover:text-gray-900 transition"
+            className="flex items-center gap-1 text-gold-200/70 hover:text-white transition"
           >
             <ChevronLeft className="w-5 h-5" />
-            <span className="hidden sm:inline">Quay lại</span>
+            <span className="hidden sm:inline text-sm">Quay lại</span>
           </button>
           
           <div className="flex flex-col items-center">
-             <h1 className="font-bold text-gray-800 text-sm sm:text-base truncate max-w-[200px] sm:max-w-md">
+             <h1 className="font-bold text-sm sm:text-base truncate max-w-[200px] sm:max-w-md heading-serif">
               {exam.title}
              </h1>
              {!isSubmitted && (
-               <div className={`text-xs font-mono font-bold flex items-center gap-1 ${timeLeft < 300 ? 'text-red-500 animate-pulse' : 'text-blue-600'}`}>
+               <div className={`text-xs font-mono font-bold flex items-center gap-1 ${timeLeft < 300 ? 'text-red-400 animate-pulse' : 'text-gold-200'}`}>
                  <Clock className="w-3 h-3" />
                  {formatTime(timeLeft)}
                </div>
@@ -126,36 +122,37 @@ export const StudentExam: React.FC<Props> = ({ exam, onExit }) => {
 
           <div className="w-24 flex justify-end">
             {isSubmitted && (
-                <span className={`font-bold text-lg ${getScoreColor()}`}>
+                <span className={`font-bold text-lg heading-serif ${getScoreColor()}`}>
                   {score.toFixed(2)}/10
                 </span>
             )}
           </div>
         </div>
+        <div className="gold-line"></div>
       </div>
 
-      <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-8">
+      <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-6">
         
         {/* Result Banner */}
         {isSubmitted && (
-          <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-edu-500 animate-fade-in">
+          <div className="card-history rounded-2xl p-6 border-l-4 border-l-gold-300 animate-fade-in">
             <div className="flex items-center gap-4 mb-4">
-              <div className="bg-edu-100 p-3 rounded-full text-edu-600">
-                <Award className="w-8 h-8" />
+              <div className="bg-gold-50 p-3 rounded-full">
+                <Award className="w-8 h-8 text-gold-400" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800">Kết quả bài làm</h2>
-                <p className="text-gray-600">
-                  Điểm Trắc nghiệm của bạn là <strong className={getScoreColor()}>{score.toFixed(2)} / 10 điểm</strong>.
+                <h2 className="text-xl font-bold text-burgundy-800 heading-serif">Kết quả bài làm</h2>
+                <p className="text-burgundy-600">
+                  Điểm của bạn: <strong className={`text-xl ${getScoreColor()}`}>{score.toFixed(2)} / 10 điểm</strong>
                 </p>
               </div>
             </div>
-            <p className="text-sm text-gray-500 italic">
+            <p className="text-sm text-parchment-500 italic">
               * Đối với phần tự luận, vui lòng đối chiếu bài làm của bạn với đáp án gợi ý bên dưới.
             </p>
             <button 
                onClick={onExit}
-               className="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition flex items-center gap-2"
+               className="mt-4 px-5 py-2.5 bg-parchment-200 hover:bg-parchment-300 text-burgundy-700 rounded-xl font-semibold transition flex items-center gap-2 text-sm"
             >
               <RotateCcw className="w-4 h-4" /> Làm đề khác
             </button>
@@ -163,71 +160,72 @@ export const StudentExam: React.FC<Props> = ({ exam, onExit }) => {
         )}
 
         {/* School Header on Paper */}
-        <div className="bg-white rounded-xl shadow-sm p-6 text-center border border-gray-100">
-            <h3 className="text-sm font-bold text-gray-500 uppercase">ĐỀ THI MÔN LỊCH SỬ</h3>
-            <h2 className="text-xl sm:text-2xl font-bold text-edu-900 mt-1">{exam.title}</h2>
-            <div className="mt-2 text-sm text-gray-500">
-              Môn: Lịch Sử • {exam.config.grade}
+        <div className="card-history rounded-2xl p-6 text-center">
+            <div className="w-12 h-12 bg-burgundy-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Scroll className="w-6 h-6 text-burgundy-500" />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-burgundy-800 heading-serif">{exam.title}</h2>
+            <div className="mt-2 text-sm text-parchment-500">
+              Môn: Lịch Sử • {exam.config.grade} • 50 phút
             </div>
         </div>
 
         {/* Multiple Choice Section */}
         {exam.multipleChoice.length > 0 && (
-          <div className="space-y-6">
-            <div className="flex items-center gap-2 mb-4 border-b pb-2">
-              <span className="bg-edu-600 text-white text-xs font-bold px-2 py-1 rounded">PHẦN 1</span>
-              <h3 className="font-bold text-gray-800 text-lg">Trắc nghiệm</h3>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-4 pb-2 border-b border-parchment-300">
+              <span className="badge-section">PHẦN 1</span>
+              <h3 className="font-bold text-burgundy-800 text-lg heading-serif">Trắc nghiệm</h3>
+              <span className="text-xs text-parchment-500 ml-auto">{exam.multipleChoice.length} câu</span>
             </div>
 
             {exam.multipleChoice.map((q, idx) => {
               const isCorrect = isSubmitted && answers[q.id] === q.correctAnswer;
               const isWrong = isSubmitted && answers[q.id] !== q.correctAnswer && answers[q.id];
-              const missed = isSubmitted && !answers[q.id];
 
               return (
                 <div 
                   key={q.id} 
-                  className={`bg-white rounded-xl shadow-sm border p-4 sm:p-6 transition-all ${
+                  className={`card-history rounded-xl p-4 sm:p-5 transition-all ${
                     isSubmitted 
                       ? isCorrect 
-                        ? 'border-green-200 bg-green-50/30' 
+                        ? 'border-green-300 bg-green-50/50' 
                         : isWrong 
-                          ? 'border-red-200 bg-red-50/30'
-                          : 'border-gray-200'
-                      : 'border-gray-200 hover:border-edu-300'
+                          ? 'border-red-300 bg-red-50/30'
+                          : ''
+                      : ''
                   }`}
                 >
                   <div className="flex gap-3">
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold flex items-center justify-center text-sm">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-burgundy-100 text-burgundy-600 font-bold flex items-center justify-center text-sm">
                       {idx + 1}
                     </span>
                     <div className="flex-1">
-                      <p className="font-medium text-gray-800 mb-4 leading-relaxed">{q.question}</p>
+                      <p className="font-medium text-burgundy-900 mb-3 leading-relaxed">{q.question}</p>
                       
-                      <div className="space-y-3">
+                      <div className="space-y-2.5">
                         {q.options.map((opt, i) => {
-                          const key = String.fromCharCode(65 + i); // A, B, C, D
+                          const key = String.fromCharCode(65 + i);
                           const isSelected = answers[q.id] === key;
                           const isThisCorrect = q.correctAnswer === key;
                           
-                          let containerClass = "border-gray-200 hover:bg-gray-50 cursor-pointer";
-                          let dotClass = "border-gray-300";
+                          let containerClass = "border-parchment-300 hover:bg-parchment-50 cursor-pointer";
+                          let dotClass = "border-parchment-400";
 
                           if (!isSubmitted) {
                             if (isSelected) {
-                                containerClass = "border-edu-500 bg-edu-50";
-                                dotClass = "border-edu-500 bg-edu-500";
+                                containerClass = "border-burgundy-400 bg-burgundy-50";
+                                dotClass = "border-burgundy-500 bg-burgundy-500";
                             }
                           } else {
-                            // Submitted state styling
                             if (isThisCorrect) {
-                                containerClass = "border-green-500 bg-green-100";
+                                containerClass = "border-green-400 bg-green-100";
                                 dotClass = "border-green-500 bg-green-500";
                             } else if (isSelected && !isThisCorrect) {
-                                containerClass = "border-red-500 bg-red-100";
+                                containerClass = "border-red-400 bg-red-100";
                                 dotClass = "border-red-500 bg-red-500";
                             } else {
-                                containerClass = "border-gray-200 opacity-60";
+                                containerClass = "border-parchment-200 opacity-50";
                             }
                           }
 
@@ -235,14 +233,14 @@ export const StudentExam: React.FC<Props> = ({ exam, onExit }) => {
                             <div 
                               key={i}
                               onClick={() => handleOptionSelect(q.id, key)}
-                              className={`relative group flex items-start gap-3 p-3 rounded-lg border-2 transition-all ${containerClass}`}
+                              className={`relative group flex items-start gap-3 p-3 rounded-xl border-2 transition-all ${containerClass}`}
                             >
                               <div className={`w-5 h-5 mt-0.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${dotClass}`}>
                                 {((!isSubmitted && isSelected) || (isSubmitted && (isThisCorrect || isSelected))) && (
                                   <div className="w-2.5 h-2.5 bg-white rounded-full" />
                                 )}
                               </div>
-                              <span className="text-sm sm:text-base text-gray-800">{cleanOptionText(opt)}</span>
+                              <span className="text-sm sm:text-base text-burgundy-800">{cleanOptionText(opt)}</span>
                               
                               {isSubmitted && isThisCorrect && (
                                 <CheckCircle className="absolute right-3 top-3 w-5 h-5 text-green-600" />
@@ -264,10 +262,11 @@ export const StudentExam: React.FC<Props> = ({ exam, onExit }) => {
 
         {/* True/False Section */}
         {exam.trueFalse && exam.trueFalse.length > 0 && (
-          <div className="space-y-6 pt-6">
-            <div className="flex items-center gap-2 mb-4 border-b pb-2">
-              <span className="bg-edu-600 text-white text-xs font-bold px-2 py-1 rounded">PHẦN 2</span>
-              <h3 className="font-bold text-gray-800 text-lg">Trắc nghiệm Đúng/Sai</h3>
+          <div className="space-y-4 pt-4">
+            <div className="flex items-center gap-2 mb-4 pb-2 border-b border-parchment-300">
+              <span className="badge-section">PHẦN 2</span>
+              <h3 className="font-bold text-burgundy-800 text-lg heading-serif">Trắc nghiệm Đúng/Sai</h3>
+              <span className="text-xs text-parchment-500 ml-auto">{exam.trueFalse.length} câu</span>
             </div>
 
             {exam.trueFalse.map((q, idx) => {
@@ -286,74 +285,64 @@ export const StudentExam: React.FC<Props> = ({ exam, onExit }) => {
               }
 
               return (
-                <div key={q.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 relative">
+                <div key={q.id} className="card-history rounded-xl p-4 sm:p-5 relative">
                   {isSubmitted && (
-                    <div className="absolute top-4 right-4 bg-gray-100 text-gray-700 text-xs font-bold px-2 py-1 rounded">
+                    <div className="absolute top-4 right-4 badge-gold">
                       +{questionScore}đ
                     </div>
                   )}
                   <div className="flex gap-3 mb-4">
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold flex items-center justify-center text-sm">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-burgundy-100 text-burgundy-600 font-bold flex items-center justify-center text-sm">
                       {idx + 1}
                     </span>
                     <div className="flex-1">
-                      <p className="font-medium text-gray-800 leading-relaxed mb-2">Đọc đoạn tư liệu sau:</p>
-                      <div className="p-3 bg-gray-50 border-l-4 border-gray-300 text-sm italic mb-4 text-gray-700">
+                      <p className="font-medium text-burgundy-800 leading-relaxed mb-2">Đọc đoạn tư liệu sau:</p>
+                      <div className="p-3 bg-parchment-50 border-l-4 border-gold-300 text-sm italic mb-4 text-burgundy-700 rounded-r-lg">
                         {q.context}
                       </div>
                       
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {q.statements.map((stmt, i) => {
-                          const label = String.fromCharCode(97 + i); // a, b, c, d
+                          const label = String.fromCharCode(97 + i);
                           const selectedValue = qAnswers[stmt.id];
                           const hasAnswered = selectedValue !== undefined;
                           const isCorrect = isSubmitted && selectedValue === stmt.isTrue;
                           const isWrong = isSubmitted && hasAnswered && selectedValue !== stmt.isTrue;
 
-                          let bgColor = "bg-white";
-                          let borderColor = "border-gray-200";
+                          let bgColor = "bg-parchment-50";
+                          let borderColor = "border-parchment-300";
                           if (isSubmitted) {
                             if (isCorrect) {
-                              bgColor = "bg-green-50/50";
+                              bgColor = "bg-green-50";
                               borderColor = "border-green-300";
                             } else if (isWrong) {
-                              bgColor = "bg-red-50/50";
+                              bgColor = "bg-red-50";
                               borderColor = "border-red-300";
                             }
                           }
 
                           return (
-                            <div key={stmt.id} className={`p-3 rounded-lg border ${bgColor} ${borderColor} transition-colors`}>
+                            <div key={stmt.id} className={`p-3 rounded-xl border ${bgColor} ${borderColor} transition-colors`}>
                               <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                                 <div className="flex-1 flex gap-2">
-                                  <span className="font-bold text-gray-700">{label}.</span>
-                                  <span className="text-gray-800">{stmt.statement}</span>
+                                  <span className="font-bold text-burgundy-600">{label}.</span>
+                                  <span className="text-burgundy-800 text-sm">{stmt.statement}</span>
                                 </div>
                                 <div className="flex items-center gap-2 mt-2 sm:mt-0 flex-shrink-0">
-                                  {/* Right/Wrong Indicator (Submitted) */}
-                                  {isSubmitted && hasAnswered && isCorrect && <CheckCircle className="w-5 h-5 text-green-600 mr-2" />}
-                                  {isSubmitted && hasAnswered && isWrong && <XCircle className="w-5 h-5 text-red-500 mr-2" />}
+                                  {isSubmitted && hasAnswered && isCorrect && <CheckCircle className="w-5 h-5 text-green-600 mr-1" />}
+                                  {isSubmitted && hasAnswered && isWrong && <XCircle className="w-5 h-5 text-red-500 mr-1" />}
                                   
-                                  {/* Buttons */}
                                   <button
                                     onClick={() => handleTfSelect(q.id, stmt.id, true)}
                                     disabled={isSubmitted}
-                                    className={`px-4 py-1.5 rounded text-sm font-semibold transition border ${
-                                      selectedValue === true 
-                                        ? 'bg-blue-600 text-white border-blue-600' 
-                                        : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
-                                    } ${isSubmitted ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                    className={`tf-btn tf-btn-true ${selectedValue === true ? 'active' : ''} ${isSubmitted ? 'opacity-70 cursor-not-allowed' : ''}`}
                                   >
                                     Đúng
                                   </button>
                                   <button
                                     onClick={() => handleTfSelect(q.id, stmt.id, false)}
                                     disabled={isSubmitted}
-                                    className={`px-4 py-1.5 rounded text-sm font-semibold transition border ${
-                                      selectedValue === false 
-                                        ? 'bg-blue-600 text-white border-blue-600' 
-                                        : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
-                                    } ${isSubmitted ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                    className={`tf-btn tf-btn-false ${selectedValue === false ? 'active' : ''} ${isSubmitted ? 'opacity-70 cursor-not-allowed' : ''}`}
                                   >
                                     Sai
                                   </button>
@@ -378,31 +367,31 @@ export const StudentExam: React.FC<Props> = ({ exam, onExit }) => {
 
         {/* Essay Section */}
         {exam.essay && exam.essay.length > 0 && (
-          <div className="space-y-6 pt-6">
-            <div className="flex items-center gap-2 mb-4 border-b pb-2">
-              <span className="bg-edu-600 text-white text-xs font-bold px-2 py-1 rounded">PHẦN 3</span>
-              <h3 className="font-bold text-gray-800 text-lg">Tự luận</h3>
+          <div className="space-y-4 pt-4">
+            <div className="flex items-center gap-2 mb-4 pb-2 border-b border-parchment-300">
+              <span className="badge-section">PHẦN 3</span>
+              <h3 className="font-bold text-burgundy-800 text-lg heading-serif">Tự luận</h3>
             </div>
 
             {exam.essay.map((q, idx) => (
-              <div key={q.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+              <div key={q.id} className="card-history rounded-xl p-4 sm:p-5">
                 <div className="flex gap-3 mb-4">
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 text-gray-600 font-bold flex items-center justify-center text-sm">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-burgundy-100 text-burgundy-600 font-bold flex items-center justify-center text-sm">
                       {idx + 1}
                     </span>
-                    <p className="font-medium text-gray-800 leading-relaxed">{q.question}</p>
+                    <p className="font-medium text-burgundy-800 leading-relaxed">{q.question}</p>
                 </div>
                 
                 <textarea 
                   disabled={isSubmitted}
                   placeholder="Nhập câu trả lời của bạn..."
-                  className="w-full min-h-[120px] p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-edu-500 outline-none text-gray-900 disabled:bg-gray-100 disabled:text-gray-500"
+                  className="w-full min-h-[120px] p-3 input-history disabled:bg-parchment-100 disabled:text-parchment-500"
                 ></textarea>
 
                 {isSubmitted && (
-                  <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg animate-fade-in">
-                    <h4 className="font-bold text-yellow-800 text-sm mb-1">Gợi ý đáp án / Hướng dẫn chấm:</h4>
-                    <p className="text-gray-700 text-sm">{q.rubric}</p>
+                  <div className="mt-4 p-4 bg-gold-50 border border-gold-200 rounded-xl animate-fade-in">
+                    <h4 className="font-bold text-gold-500 text-sm mb-1">Gợi ý đáp án / Hướng dẫn chấm:</h4>
+                    <p className="text-burgundy-700 text-sm">{q.rubric}</p>
                   </div>
                 )}
               </div>
@@ -415,7 +404,7 @@ export const StudentExam: React.FC<Props> = ({ exam, onExit }) => {
             <div className="sticky bottom-4 z-30">
                 <button 
                 onClick={handleSubmit}
-                className="w-full bg-edu-600 hover:bg-edu-700 text-white font-bold py-4 rounded-xl shadow-xl flex items-center justify-center gap-2 text-lg transition-transform active:scale-[0.98]"
+                className="w-full btn-primary flex items-center justify-center gap-2 text-lg py-4"
                 >
                 <Send className="w-5 h-5" /> Nộp bài
                 </button>

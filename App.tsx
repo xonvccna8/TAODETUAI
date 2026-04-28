@@ -6,7 +6,7 @@ import { StudentExam } from './components/StudentExam';
 import { ExamConfig, ExamData } from './types';
 import { generateExam } from './services/geminiService';
 import { saveExamToStorage, getSavedExams, deleteExam } from './services/storageService';
-import { BookOpen, AlertCircle } from 'lucide-react';
+import { BookOpen, AlertCircle, Scroll, Landmark, Star } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentExam, setCurrentExam] = useState<ExamData | null>(null);
@@ -38,8 +38,7 @@ const App: React.FC = () => {
   const handleSelectExam = (exam: ExamData) => {
     setCurrentExam(exam);
     setError(null);
-    setViewMode('teacher'); // Always switch back to teacher view when selecting a new exam
-    // Scroll to top of preview on mobile
+    setViewMode('teacher');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -59,29 +58,34 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 pb-12">
+    <div className="min-h-screen bg-parchment-100 pb-12">
       {/* Header */}
-      <header className="bg-edu-900 text-white shadow-lg sticky top-0 z-50">
+      <header className="header-gradient text-white sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-white/10 p-2 rounded-lg">
-              <BookOpen className="w-6 h-6" />
+            <div className="bg-gold-300/20 p-2.5 rounded-xl border border-gold-300/30">
+              <Scroll className="w-6 h-6 text-gold-200" />
             </div>
             <div>
-              <h1 className="text-lg font-bold leading-tight">GenHistory Exam Pro</h1>
-              <p className="text-xs text-white/60">Tạo đề thi Lịch sử THPT chuẩn 2025</p>
+              <h1 className="text-lg font-bold leading-tight heading-serif tracking-wide">GenHistory Exam Pro</h1>
+              <p className="text-xs text-gold-200/70">Tạo đề thi Lịch sử THPT • Chuẩn cấu trúc 2025</p>
             </div>
           </div>
+          <div className="hidden sm:flex items-center gap-2 text-gold-200/50 text-xs">
+            <Landmark className="w-4 h-4" />
+            <span>Powered by ChatGPT AI</span>
+          </div>
         </div>
+        <div className="gold-line"></div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg flex items-center gap-3 text-red-700 shadow-sm animate-fade-in">
+          <div className="mb-6 bg-red-50 border border-red-200 border-l-4 border-l-red-500 p-4 rounded-xl flex items-center gap-3 text-red-700 shadow-sm animate-fade-in">
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <p>{error}</p>
+            <p className="text-sm">{error}</p>
           </div>
         )}
 
@@ -106,12 +110,15 @@ const App: React.FC = () => {
                 onTakeExam={() => setViewMode('student')}
               />
             ) : (
-              <div className="h-full min-h-[400px] flex flex-col items-center justify-center bg-white rounded-xl border border-dashed border-gray-300 text-gray-400">
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                  <BookOpen className="w-8 h-8 opacity-40" />
+              <div className="h-full min-h-[400px] flex flex-col items-center justify-center card-history rounded-2xl border-2 border-dashed border-parchment-400 text-parchment-500">
+                <div className="w-20 h-20 bg-parchment-200 rounded-full flex items-center justify-center mb-5">
+                  <Scroll className="w-10 h-10 opacity-40 text-burgundy-400" />
                 </div>
-                <p className="text-lg font-medium">Chưa có đề thi nào được chọn</p>
-                <p className="text-sm mt-2">Hãy thiết lập thông số và nhấn "Tạo Đề Thi Ngay" hoặc chọn từ lịch sử.</p>
+                <p className="text-lg font-semibold heading-serif text-burgundy-600">Chưa có đề thi nào được chọn</p>
+                <p className="text-sm mt-2 text-parchment-500 max-w-xs text-center">Hãy thiết lập thông số và nhấn "Tạo Đề Thi Ngay" hoặc chọn từ lịch sử bên trái.</p>
+                <div className="flex items-center gap-1 mt-4 text-gold-400">
+                  <Star className="w-3 h-3" /><Star className="w-3 h-3" /><Star className="w-3 h-3" />
+                </div>
               </div>
             )}
           </div>
