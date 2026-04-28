@@ -168,12 +168,12 @@ export const ExamConfigForm: React.FC<Props> = ({ onGenerate, isGenerating }) =>
           {isGenerating ? (
             <>
               <Loader2 className="animate-spin w-5 h-5" />
-              Đang tạo đề (Gemini Flash Lite)...
+              Đang tạo đề (ChatGPT)...
             </>
           ) : (
             <>
               <Wand2 className="w-5 h-5" />
-              Tạo Đề Thi Tiết Kiệm
+              Tạo Đề Thi Ngay
             </>
           )}
         </button>
