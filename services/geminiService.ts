@@ -13,18 +13,27 @@ export const generateExam = async (config: ExamConfig): Promise<ExamData> => {
 
   const systemPrompt = `Bạn là một chuyên gia ra đề thi Lịch sử chuẩn cấu trúc THPT 2025 của Bộ GD&ĐT.
 Bạn LUÔN trả về kết quả dưới dạng JSON hợp lệ theo đúng cấu trúc được yêu cầu.
-TUYỆT ĐỐI KHÔNG thêm các ký tự đánh số thứ tự như "A.", "B.", "C.", "D." hoặc "a)", "b)" vào đầu nội dung của các phương án trắc nghiệm hoặc các mệnh đề đúng/sai. Hệ thống hiển thị sẽ tự động thêm vào.`;
+
+QUY TẮC NGHIÊM NGẶT VỀ SỐ LƯỢNG:
+- Mảng "multipleChoice" phải có ĐÚNG số phần tử theo yêu cầu. KHÔNG ĐƯỢC nhiều hơn hoặc ít hơn.
+- Mảng "trueFalse" phải có ĐÚNG số phần tử theo yêu cầu.
+- Mảng "essay" phải có ĐÚNG số phần tử theo yêu cầu.
+- TUYỆT ĐỐI KHÔNG nhầm lẫn tổng số câu với số câu từng phần.
+
+TUYỆT ĐỐI KHÔNG thêm các ký tự đánh số thứ tự như "A.", "B.", "C.", "D." hoặc "a)", "b)" vào đầu nội dung của các phương án trắc nghiệm hoặc các mệnh đề đúng/sai.`;
 
   const userPrompt = `Hãy soạn một đề thi môn Lịch sử với các yêu cầu sau:
 
 1. **Chủ đề/Nội dung:** ${config.topic}
 2. **Đối tượng:** Học sinh ${config.grade}
-3. **Cấu trúc đề thi:**
-   - Phần 1: ${config.mcCount} câu trắc nghiệm nhiều phương án lựa chọn (4 lựa chọn A, B, C, D - chỉ 1 đáp án đúng).
-   - Phần 2: ${config.tfCount} câu trắc nghiệm Đúng/Sai. Mỗi câu gồm 1 đoạn ngữ liệu lịch sử (context) và chính xác 4 ý phát biểu (statements). Ở mỗi ý, học sinh sẽ chọn Đúng hoặc Sai. (isTrue = true nếu đúng, false nếu sai).
-   - Phần Tự luận: ${config.essayCount || 0} câu tự luận.
+3. **Cấu trúc đề thi (RẤT QUAN TRỌNG - PHẢI TUÂN THỦ CHÍNH XÁC SỐ LƯỢNG):**
+   - Phần 1 (multipleChoice): CHÍNH XÁC ${config.mcCount} câu trắc nghiệm nhiều phương án lựa chọn (4 lựa chọn A, B, C, D - chỉ 1 đáp án đúng). Mảng "multipleChoice" phải có ĐÚNG ${config.mcCount} phần tử, KHÔNG ĐƯỢC tạo nhiều hơn hoặc ít hơn ${config.mcCount} câu.
+   - Phần 2 (trueFalse): CHÍNH XÁC ${config.tfCount} câu trắc nghiệm Đúng/Sai. Mỗi câu gồm 1 đoạn ngữ liệu lịch sử (context) và chính xác 4 ý phát biểu (statements). (isTrue = true nếu đúng, false nếu sai). Mảng "trueFalse" phải có ĐÚNG ${config.tfCount} phần tử.
+   - Phần 3 (essay): CHÍNH XÁC ${config.essayCount || 0} câu tự luận. ${(config.essayCount || 0) === 0 ? 'Mảng "essay" phải là mảng rỗng [].' : `Mảng "essay" phải có ĐÚNG ${config.essayCount} phần tử.`}
 4. **Ma trận nhận thức (Phân bố mức độ khó):**
    ${distributionText}
+
+**Tóm tắt số lượng: multipleChoice = ${config.mcCount} câu, trueFalse = ${config.tfCount} câu, essay = ${config.essayCount || 0} câu.**
 
 **Yêu cầu về nội dung:**
 - Bám sát chương trình Giáo dục phổ thông 2018.
@@ -34,33 +43,9 @@ TUYỆT ĐỐI KHÔNG thêm các ký tự đánh số thứ tự như "A.", "B."
 **Trả về JSON theo cấu trúc sau (KHÔNG được thêm text ngoài JSON):**
 {
   "title": "Tên đề thi",
-  "multipleChoice": [
-    {
-      "question": "Nội dung câu hỏi",
-      "options": ["Phương án 1", "Phương án 2", "Phương án 3", "Phương án 4"],
-      "correctAnswer": "A",
-      "level": "Nhận biết"
-    }
-  ],
-  "trueFalse": [
-    {
-      "context": "Đoạn ngữ liệu lịch sử...",
-      "statements": [
-        { "statement": "Nội dung ý a", "isTrue": true },
-        { "statement": "Nội dung ý b", "isTrue": false },
-        { "statement": "Nội dung ý c", "isTrue": true },
-        { "statement": "Nội dung ý d", "isTrue": false }
-      ],
-      "level": "Thông hiểu"
-    }
-  ],
-  "essay": [
-    {
-      "question": "Nội dung câu hỏi tự luận",
-      "rubric": "Hướng dẫn chấm ngắn gọn",
-      "level": "Vận dụng"
-    }
-  ]
+  "multipleChoice": [... ĐÚNG ${config.mcCount} câu ...],
+  "trueFalse": [... ĐÚNG ${config.tfCount} câu ...],
+  "essay": [... ĐÚNG ${config.essayCount || 0} câu ...]
 }`;
 
   try {
